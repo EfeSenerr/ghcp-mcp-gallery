@@ -1,15 +1,385 @@
-<!-- Basic HTML 5 skeleton with minimal hello world -->
+<!-- Polaroid Image Gallery -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Polaroid Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #3d6379;
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* Navigation Styles */
+        .nav-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-menu {
+            position: absolute;
+            top: 100%;
+            left: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            min-width: 150px;
+            z-index: 1000;
+        }
+
+        .nav-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(10px);
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            padding: 0.5rem 0;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            color: #3d6379;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            background: #f0f0f0;
+            color: #2a4a5e;
+        }
+
+        /* Main Content */
+        main {
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Polaroid Gallery Grid - Always 3x3 */
+        .polaroid-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .polaroid {
+            background: white;
+            padding: 1rem;
+            padding-bottom: 2.5rem;
+            border-radius: 2px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .polaroid:nth-child(odd) {
+            transform: rotate(-2deg);
+        }
+
+        .polaroid:nth-child(even) {
+            transform: rotate(1.5deg);
+        }
+
+        .polaroid:nth-child(3n) {
+            transform: rotate(-1deg);
+        }
+
+        .polaroid:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            z-index: 10;
+        }
+
+        .polaroid-image-container {
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .polaroid:hover img {
+            transform: scale(1.1);
+        }
+
+        .polaroid-caption {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #333;
+            font-style: italic;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Footer with Marquee Animation */
+        footer {
+            background: #3d6379;
+            padding: 2rem 0;
+            overflow: hidden;
+            position: relative;
+            height: 120px;
+        }
+
+        .footer-marquee {
+            position: absolute;
+            white-space: nowrap;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            animation: marqueeScroll 20s linear infinite;
+            top: 70%;
+            transform: translateY(-50%);
+        }
+        
+        .nyan-cat {
+            position: absolute;
+            width: 150px;
+            height: 100px;
+            background-image: url('https://media.tenor.com/E3MLgDP1qoQAAAAi/nyan-cat-transparent.gif');
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: flyNyanCat 12s linear infinite;
+            top: 20%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        @keyframes flyNyanCat {
+            from {
+                transform: translateX(-150px) translateY(-50%);
+            }
+            to {
+                transform: translateX(100vw) translateY(-50%);
+            }
+        }
+
+        @keyframes marqueeScroll {
+            from {
+                transform: translateX(-100%) translateY(-50%);
+            }
+            to {
+                transform: translateX(100vw) translateY(-50%);
+            }
+        }
+
+        /* Responsive: Maintain 3x3 on all screens */
+        @media (max-width: 768px) {
+            .polaroid-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .polaroid img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .polaroid-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .polaroid {
+                padding: 0.5rem;
+                padding-bottom: 1.5rem;
+            }
+
+            .polaroid img {
+                height: 100px;
+            }
+
+            .polaroid-caption {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Hello, World!</h1>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <button class="nav-toggle" onclick="toggleNav()">☰ Menu</button>
+            <div class="header-title">Header</div>
+        </div>
+        <nav class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="#nav1">Nav1</a></li>
+                <li><a href="#nav2">Nav2</a></li>
+                <li><a href="#nav3">Nav3</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- 3x3 Polaroid Grid (Exactly 9 Images) -->
+        <div class="polaroid-grid">
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=1" alt="Random Image 1">
+                </div>
+                <div class="polaroid-caption">Photo 1</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=2" alt="Random Image 2">
+                </div>
+                <div class="polaroid-caption">Photo 2</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=3" alt="Random Image 3">
+                </div>
+                <div class="polaroid-caption">Photo 3</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=4" alt="Random Image 4">
+                </div>
+                <div class="polaroid-caption">Photo 4</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=5" alt="Random Image 5">
+                </div>
+                <div class="polaroid-caption">Photo 5</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=6" alt="Random Image 6">
+                </div>
+                <div class="polaroid-caption">Photo 6</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=7" alt="Random Image 7">
+                </div>
+                <div class="polaroid-caption">Photo 7</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=8" alt="Random Image 8">
+                </div>
+                <div class="polaroid-caption">Photo 8</div>
+            </div>
+            <div class="polaroid" onclick="playRickroll()">
+                <div class="polaroid-image-container">
+                    <img src="https://picsum.photos/300/300?random=9" alt="Random Image 9">
+                </div>
+                <div class="polaroid-caption">Photo 9</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer with Flying Text -->
+    <footer>
+        <div class="nyan-cat"></div>
+        <div class="footer-marquee">Footer (a **MUST DO** flying repeatable from left to right!!!!) 🎉 SALES LOVES THIS!!!111 😊 🎉</div>
+    </footer>
+
+    <!-- Minimal JavaScript -->
+    <script>
+        // Toggle navigation menu
+        function toggleNav() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Close navigation when clicking outside
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('navMenu');
+            const navToggle = document.querySelector('.nav-toggle');
+            
+            if (!navMenu.contains(event.target) && !navToggle.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Rickroll sound effect - SALES LOVES THIS!!!111 😊
+        function playRickroll() {
+            try {
+                const audioUrl = "https://media.memesoundeffects.com/2023/03/Rick-Roll-Sound-djlunatique.com_.mp3";
+                
+                let rickrollAudio = document.getElementById('rickrollAudio');
+                
+                if (!rickrollAudio) {
+                    rickrollAudio = new Audio(audioUrl);
+                    rickrollAudio.id = 'rickrollAudio';
+                    rickrollAudio.volume = 0.5;
+                    document.body.appendChild(rickrollAudio);
+                }
+                
+                rickrollAudio.currentTime = 0;
+                rickrollAudio.play();
+                
+                console.log("🎵 Never gonna give you up! 🎵");
+            } catch (error) {
+                console.error("Error playing rickroll:", error);
+            }
+        }
+    </script>
 </body>
 
 </html>
